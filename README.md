@@ -9,6 +9,14 @@ The data in the **EuroSat** dataset come from the Sentinel-2 satellite series, w
 
 The European Space Agency (ESA) monitors the Earth using its Sentinel satellites, gathering data on various aspects of the environment, including land use, changes in vegetation cover, water quality, climate change, etc. These data are publicly available for scientific, research, and engineering purposes.
 
+<div align="center">
+  <img src="./documentation/Sentinel-2.png" width="600"/>
+</div>
+<div align="center">
+  <a href="https://sentinel.esa.int/documents/247904/4180891/Sentinel-2-infographic.pdf">Source</a>
+</div>
+
+
 The **EuroSat** dataset is a collection of geospatial images obtained from the Sentinel-2 satellite. It contains images in two main formats:
 
 1. EuroSAT: This folder contains images in RGB format (red, green, blue), which were collected from the Sentinel dataset.
