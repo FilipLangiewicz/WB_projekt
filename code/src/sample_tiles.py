@@ -44,9 +44,9 @@ def get_triplet_tiles(tile_dir, img_dir, img_triplets, tile_size=50, neighborhoo
     tiles = np.zeros((n_triplets, 3, 2), dtype=np.int16)
 
     for img_name in unique_imgs:
-        print("Sampling image {}".format(img_name))
+        print("Sampling image {} from dir".format(img_name))
         if img_name[-3:] == 'npy':
-            img = np.load(img_name)
+            img = np.load(os.path.join(img_dir, img_name))
         else:
             img = load_img(os.path.join(img_dir, img_name), val_type=val_type, 
                        bands_only=bands_only)
