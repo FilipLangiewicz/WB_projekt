@@ -19,22 +19,23 @@ import pandas as pd
 import sys
 
 sys.path.append("../")
-from src.tilenet import make_tilenet
-from src.resnet import ResNet18
 import pandas as pd
 from pathlib import Path
 from osgeo import gdal
 
 
-img_type = "landsat"  # images are in float - this parameter specifies that there is a need for normalization of floats
+img_type = "sentinel"  # images are in float - this parameter specifies that there is a need for normalization of floats
 tile_dir = Path("/storage/tile2vec/tiles")
 base_eurosat_dir = Path("/storage/EuroSATallBands")
 bands = 13
 num_workers = 4
-n_triplets = 10000
+n_triplets = 50000
 
 train_path = Path("/storage/EuroSATallBands/train.csv")
 train_df = pd.read_csv(train_path)
+
+random.seed(44)
+np.random.seed(44)
 
 
 def get_triplet_imgs(img_df, n_triplets=1000):
@@ -44,11 +45,11 @@ def get_triplet_imgs(img_df, n_triplets=1000):
     of distant tiles.
     """
     img_names = []
-    for filename in img_df["Filename"]:
-        img_names.append(filename)
-    img_triplets = list(map(lambda _: random.choice(img_names), range(2 * n_triplets)))
-    img_triplets = np.array(img_triplets)
-    return img_triplets.reshape((-1, 2))
+    img_names = img_df["Filename"].to_numpy()
+    print("Sampling tiles")
+    a = [np.random.choice(img_names, size=2, replace = False) for _ in tqdm(range(n_triplets))]
+    img_triplets = np.vstack(a)
+    return img_triplets
 
 
 def get_triplet_tiles(
@@ -62,6 +63,7 @@ def get_triplet_tiles(
     save=True,
     verbose=False,
 ):
+    print("Loading and preprocessing triplets")
     if not os.path.exists(tile_dir):
         os.makedirs(tile_dir)
     size_even = tile_size % 2 == 0
@@ -70,6 +72,7 @@ def get_triplet_tiles(
     n_triplets = img_triplets.shape[0]
     unique_imgs = np.unique(img_triplets)
     tiles = np.zeros((n_triplets, 3, 2), dtype=np.int16)
+    
 
     for img_name in tqdm(unique_imgs):
         if img_name[-3:] == "npy":
@@ -115,9 +118,16 @@ def get_triplet_tiles(
 
                 if row[1] == img_name:
                     # distant image is same as anchor/neighbor image
-                    xd, yd = sample_distant_same(
-                        img_shape, xa, ya, neighborhood, tile_radius
-                    )
+                    try:
+                        xd, yd = sample_distant_same(
+                            img_shape, xa, ya, neighborhood, tile_radius
+                        )
+                    except ValueError:
+                        print("Could not sample from the same image")
+                        print("Image name ", img_name)
+                        print("Exiting...")
+                        exit(0)
+                        
                     if verbose:
                         print("    Saving distant tile #{}".format(idx))
                         print("    Distant tile center:{}".format((xd, yd)))
@@ -154,6 +164,9 @@ in_channels = bands
 z_dim = 512
 
 img_triplets = get_triplet_imgs(train_df, n_triplets)
+print("finished generating triplet sources")
+
+# stops at 7819
 
 
 tiles = get_triplet_tiles(tile_dir, base_eurosat_dir, img_triplets)
