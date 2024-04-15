@@ -17,4 +17,8 @@ def clip_and_scale_image(img, img_type='naip', clip_min=0, clip_max=10000):
         return img / 255
     elif img_type == 'landsat':
         return np.clip(img, clip_min, clip_max) / (clip_max - clip_min)
+    elif img_type == "sentinel":
+        return np.clip(img, clip_min, clip_max) / (clip_max - clip_min)
+    else:
+        raise ValueError("incorrect img type")
 

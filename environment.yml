@@ -16,4 +16,5 @@ dependencies:
   - pandas
   - scikit-learn
   - imageio
+  - tqdm
 
