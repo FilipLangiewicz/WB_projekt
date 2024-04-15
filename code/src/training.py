@@ -30,10 +30,10 @@ def train_triplet_epoch(model, cuda, dataloader, optimizer, epoch, margin=1,
         loss, l_n, l_d, l_nd = model.loss(p, n, d, margin=margin, l2=l2)
         loss.backward()
         optimizer.step()
-        sum_loss += loss.data[0]
-        sum_l_n += l_n.data[0]
-        sum_l_d += l_d.data[0]
-        sum_l_nd += l_nd.data[0]
+        sum_loss += loss.item()
+        sum_l_n += l_n.item()
+        sum_l_d += l_d.item()
+        sum_l_nd += l_nd.item()
         if (idx + 1) * dataloader.batch_size % print_every == 0:
             print_avg_loss = (sum_loss - print_sum_loss) / (
                 print_every / dataloader.batch_size)
