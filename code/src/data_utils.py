@@ -1,6 +1,8 @@
 import os
 from osgeo import gdal
 import imageio
+import numpy as np
+
 from time import time
 from collections import Counter
 from sklearn.preprocessing import StandardScaler
