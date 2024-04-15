@@ -20,7 +20,7 @@ augment = True
 batch_size = 50
 shuffle = True
 num_workers = 16
-n_triplets = 10000
+n_triplets = 50000
 z_dim = 512
 
 
@@ -72,5 +72,5 @@ with open(results_fn, 'w') as file:
 # Save model after last epoch
 if save_models:
     print("saving model")
-    model_fn = os.path.join(model_dir, 'TileNet_default.ckpt')
+    model_fn = os.path.join(model_dir, 'TileNet_default_clipping.ckpt')
     torch.save(TileNet.state_dict(), model_fn)
