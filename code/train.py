@@ -3,6 +3,9 @@ from src.tilenet import make_tilenet
 from src.training import prep_triplets, train_triplet_epoch
 from torch import optim
 
+import matplotlib.pyplot as plt
+import pickle 
+
 import os
 import torch
 from time import time
@@ -12,9 +15,9 @@ cuda = torch.cuda.is_available()
 
 print("Cuda device: ", cuda)
 
-
-img_type = "landsat" #images are in float - this parameter specifies that there is a need for normalization of floats
-tile_dir = '/storage/tile2vec/tiles'
+model_name = 'TileNet_tile_40.ckpt'
+img_type = "sentinel" #images are in float - this parameter specifies that there is a need for normalization of floats
+tile_dir = '/storage/tile2vec/tiles_small'
 bands = 13
 augment = True
 batch_size = 50
@@ -46,7 +49,7 @@ optimizer = optim.Adam(TileNet.parameters(), lr=lr, betas=(0.5, 0.999))
 
 
 
-epochs = 50
+epochs = 30
 margin = 10
 l2 = 0.01
 print_every = 1000
@@ -58,6 +61,10 @@ if not os.path.exists(model_dir):
     
 results_fn = "/storage/tile2vec/results_fn"
 
+avg_losses = []
+avg_l_ns = []
+avg_l_ds = []
+avg_l_nds = []
 
 t0 = time()
 with open(results_fn, 'w') as file:
@@ -68,9 +75,19 @@ with open(results_fn, 'w') as file:
             TileNet, cuda, dataloader, optimizer, epoch+1, margin=margin, l2=l2,
             print_every=print_every, t0=t0)
         
+        avg_losses.append(avg_loss)
+        avg_l_ns.append(avg_l_n)
+        avg_l_ds.append(avg_l_d)
+        avg_l_nds.append(avg_l_nd)
+
+
 
 # Save model after last epoch
 if save_models:
     print("saving model")
-    model_fn = os.path.join(model_dir, 'TileNet_default_clipping.ckpt')
+    model_fn = os.path.join(model_dir, model_name)
     torch.save(TileNet.state_dict(), model_fn)
+ 
+with open(model_name + ".pkl", "w") as f:
+    avg = {"losses": avg_losses, "l_n": avg_l_ns, "l_d": avg_l_ds, "l_nd": avg_l_nds}
+    pickle.dump(avg, f)
