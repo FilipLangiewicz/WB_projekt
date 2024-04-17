@@ -33,6 +33,7 @@ def clip_and_scale_image(img, img_type='naip', clip_min = None, clip_max=None):
         clip_max= np.reshape(clip_max, (len(clip_max), 1, 1)) # bands first
 
         img = (np.clip(img, clip_min, clip_max) - clip_min) / (clip_max - clip_min)
+        return img
     else:
         raise ValueError("incorrect img type")
 

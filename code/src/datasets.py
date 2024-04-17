@@ -88,7 +88,7 @@ class ClipAndScale(object):
     satellite images. Clipping applies for Landsat only.
     """
     def __init__(self, img_type):
-        assert img_type in ['naip', 'rgb', 'landsat']
+        assert img_type in ['naip', 'rgb', 'landsat', "sentinel"]
         self.img_type = img_type
 
     def __call__(self, sample):
@@ -120,7 +120,7 @@ def triplet_dataloader(img_type, tile_dir, bands=4, augment=True,
     Turn shuffle to False for producing embeddings that correspond to original
     tiles.
     """
-    assert img_type in ['landsat', 'rgb', 'naip']
+    assert img_type in ['landsat', 'rgb', 'naip', "sentinel"]
     transform_list = []
     if img_type in ['landsat', 'naip']: transform_list.append(GetBands(bands))
     transform_list.append(ClipAndScale(img_type))
