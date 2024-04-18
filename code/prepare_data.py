@@ -23,13 +23,14 @@ import pandas as pd
 from pathlib import Path
 from osgeo import gdal
 
+# script creates the triplets to train the tile2vec model
 
-img_type = "sentinel"  # images are in float - this parameter specifies that there is a need for normalization of floats
-tile_dir = Path("/storage/tile2vec/tiles")
+img_type = "landsat"  # images are in float - this parameter specifies that there is a need for normalization of floats
+tile_dir = Path("/storage/tile2vec/tiles_large")
 base_eurosat_dir = Path("/storage/EuroSATallBands")
 bands = 13
 num_workers = 4
-n_triplets = 50000
+n_triplets = 50000 # number of triplets to sample
 
 train_path = Path("/storage/EuroSATallBands/train.csv")
 train_df = pd.read_csv(train_path)
@@ -38,6 +39,7 @@ random.seed(44)
 np.random.seed(44)
 
 
+# modified function by us
 def get_triplet_imgs(img_df, n_triplets=1000):
     """
     Returns a numpy array of dimension (n_triplets, 2). First column is
@@ -47,11 +49,15 @@ def get_triplet_imgs(img_df, n_triplets=1000):
     img_names = []
     img_names = img_df["Filename"].to_numpy()
     print("Sampling tiles")
-    a = [np.random.choice(img_names, size=2, replace = False) for _ in tqdm(range(n_triplets))]
+    a = [
+        np.random.choice(img_names, size=2, replace=False)
+        for _ in tqdm(range(n_triplets))
+    ]
     img_triplets = np.vstack(a)
     return img_triplets
 
 
+# modified function by us
 def get_triplet_tiles(
     tile_dir,
     img_dir,
@@ -72,7 +78,6 @@ def get_triplet_tiles(
     n_triplets = img_triplets.shape[0]
     unique_imgs = np.unique(img_triplets)
     tiles = np.zeros((n_triplets, 3, 2), dtype=np.int16)
-    
 
     for img_name in tqdm(unique_imgs):
         if img_name[-3:] == "npy":
@@ -127,7 +132,7 @@ def get_triplet_tiles(
                         print("Image name ", img_name)
                         print("Exiting...")
                         exit(0)
-                        
+
                     if verbose:
                         print("    Saving distant tile #{}".format(idx))
                         print("    Distant tile center:{}".format((xd, yd)))
@@ -166,9 +171,4 @@ z_dim = 512
 img_triplets = get_triplet_imgs(train_df, n_triplets)
 print("finished generating triplet sources")
 
-# stops at 7819
-
-
-tiles = get_triplet_tiles(tile_dir, base_eurosat_dir, img_triplets)
-
-
+tiles = get_triplet_tiles(tile_dir, base_eurosat_dir, img_triplets, tile_size=60)
