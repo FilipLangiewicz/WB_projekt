@@ -32,6 +32,21 @@ def get_triplet_imgs(img_dir, img_ext='.tif', n_triplets=1000):
     img_triplets = np.array(img_triplets)
     return img_triplets.reshape((-1, 2))
 
+def get_triplet_imgs_with_dirs(img_dir_list, img_ext='.tif', n_triplets=1000):
+    """
+    Returns a numpy array of dimension (n_triplets, 2). First column is
+    the img name of anchor/neighbor tiles and second column is img name 
+    of distant tiles.
+    """
+    img_names = []
+    for img_dir in img_dir_list:
+        for filename in os.listdir(img_dir):
+            if filename.endswith(img_ext):
+                img_names.append(os.path.basename(img_dir)+"/"+filename)
+    img_triplets = list(map(lambda _: random.choice(img_names), range(2 * n_triplets)))
+    img_triplets = np.array(img_triplets)
+    return img_triplets.reshape((-1, 2))
+
 def get_triplet_tiles(tile_dir, img_dir, img_triplets, tile_size=50, neighborhood=100, 
                       val_type='uint8', bands_only=False, save=True, verbose=False):
     if not os.path.exists(tile_dir):
@@ -44,9 +59,9 @@ def get_triplet_tiles(tile_dir, img_dir, img_triplets, tile_size=50, neighborhoo
     tiles = np.zeros((n_triplets, 3, 2), dtype=np.int16)
 
     for img_name in unique_imgs:
-        print("Sampling image {}".format(img_name))
+        print("Sampling image {} from dir".format(img_name))
         if img_name[-3:] == 'npy':
-            img = np.load(img_name)
+            img = np.load(os.path.join(img_dir, img_name))
         else:
             img = load_img(os.path.join(img_dir, img_name), val_type=val_type, 
                        bands_only=bands_only)
