@@ -12,6 +12,8 @@ from time import time
 
 # script to train the tile2vec model
 
+import sys
+sys.path.append("..")
 
 # values to change during training
 model_name = 'TileNet_tile_30.ckpt'

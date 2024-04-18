@@ -17,8 +17,7 @@ from tqdm import tqdm
 import pandas as pd
 
 import sys
-
-sys.path.append("../")
+sys.path.append("..")
 import pandas as pd
 from pathlib import Path
 from osgeo import gdal
