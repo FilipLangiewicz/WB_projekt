@@ -146,6 +146,9 @@ def sample_distant_same(img_shape, xa, ya, neighborhood, tile_radius):
     h = h_padded - 2 * tile_radius
     
     xd, yd = xa, ya
+    if (xa + neighborhood >= w and xa - neighborhood <= 0) or yd + neighborhood >= h and yd - neighborhood <= 0:
+        raise ValueError("Image is to small to sample two images")
+    
     while (xd >= xa - neighborhood) and (xd <= xa + neighborhood):
         xd = np.random.randint(0, w) + tile_radius
     while (yd >= ya - neighborhood) and (yd <= ya + neighborhood):
