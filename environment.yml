@@ -17,4 +17,5 @@ dependencies:
   - scikit-learn
   - imageio
   - tqdm
+  - rasterio
 

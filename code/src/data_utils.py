@@ -15,6 +15,8 @@ def clip_and_scale_image(img, img_type='naip', clip_min = None, clip_max=None):
     """
     if img_type in ['naip', 'rgb']:
         return img / 255
+    if img_type == "no_transform":
+        return img
     elif img_type == 'landsat':
         if clip_min is None:
             clip_min = 0
