@@ -1,0 +1,5 @@
+Prezka:
+1. info z edy F (10 metrow pomiedzy piskelami)
+2. rozklad klas
+3. Tymek zrobi jakies 6 przykladow 
+4. wspomnienie ze odpallalismy model na naszych danych i mial 70 % accuracy
