@@ -36,6 +36,9 @@ For all or some cases, the distant tile could be explicitly taken from the same 
 
 maybe some interesting source: [False Negative Elimination](https://arxiv.org/pdf/2308.04380)
 
+
+A different approach would be to leverage the labels in a triplet loss, such that neighbour tile could be taken from the same class as the anchor, meanwhile the distand could be taken from the different class.
+
 ### Self-supervised representation learning
 The main goal of this method would be to train model with different objective. The objective would be to compare the model outputs from differently augumented image.
 
