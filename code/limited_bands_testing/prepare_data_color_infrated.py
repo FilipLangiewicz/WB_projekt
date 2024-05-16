@@ -25,7 +25,7 @@ from osgeo import gdal
 # script creates the triplets to train the tile2vec model
 
 img_type = "landsat"  # images are in float - this parameter specifies that there is a need for normalization of floats
-tile_dir = Path("/storage/tile2vec/tiles_large")
+tile_dir = Path("/storage/tile2vec/limited_bands/color_infrated")
 base_eurosat_dir = Path("/storage/EuroSATallBands")
 bands = 3
 num_workers = 4

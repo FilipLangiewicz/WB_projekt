@@ -47,6 +47,8 @@ def load_img_color_infrated(img_file, val_type='uint8', bands_only=False, select
 
     if bands_only:
         img = img[:, :, selected_bands]
+        # PRZY WIĘKSZYCH PRZEKSZTAŁCENIACH DODATKOWA MODYFIKACJA TYPU
+        # img[:,:,3] = img[:,:,2] - img[:,:,1]
     
     return img
 

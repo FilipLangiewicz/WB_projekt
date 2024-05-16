@@ -1,3 +1,5 @@
+import sys
+sys.path.append('..')
 from src.datasets import TileTripletsDataset, GetBands, RandomFlipAndRotate, ClipAndScale, ToFloatTensor, triplet_dataloader
 from src.tilenet import make_tilenet
 from src.training import prep_triplets, train_triplet_epoch
@@ -17,11 +19,11 @@ sys.path.append("..")
 
 # values to change during training
 #TO CHANGE
-model_name = 'TileNet_tile_30.ckpt' #defining name of model to train
+model_name = 'Tile2Vec_color_infrated.ckpt' #defining name of model to train
 img_type = "landsat" # images are in float - this parameter specifies that there is a need for normalization of floats
 #TO CHANGE
-tile_dir = '/storage/tile2vec/tiles_very_small' # directory where are the triplets stored
-bands = 13
+tile_dir = '/storage/tile2vec/limited_bands/color_infrated' # directory where are the triplets stored
+bands = 3
 augment = True
 batch_size = 50
 shuffle = True
@@ -65,12 +67,11 @@ print_every = 1000 # how often model will produce the information about the loss
 save_models = True
 
 # create model directory
-model_dir = '/storage/tile2vec/models'
+model_dir = '/storage/tile2vec/models/limited_bands_models'
 if not os.path.exists(model_dir): 
     os.makedirs(model_dir)
     
 
-results_fn = "/storage/tile2vec/results_fn"
 
 # avg_losses = []
 # avg_l_ns = []
@@ -78,12 +79,11 @@ results_fn = "/storage/tile2vec/results_fn"
 # avg_l_nds = []
 
 t0 = time()
-with open(results_fn, 'w') as file:
-    print('Begin training.................')
-    for epoch in range(0, epochs):
-        (avg_loss, avg_l_n, avg_l_d, avg_l_nd) = train_triplet_epoch(
-            TileNet, cuda, dataloader, optimizer, epoch+1, margin=margin, l2=l2,
-            print_every=print_every, t0=t0)
+print('Begin training.................')
+for epoch in range(0, epochs):
+    (avg_loss, avg_l_n, avg_l_d, avg_l_nd) = train_triplet_epoch(
+        TileNet, cuda, dataloader, optimizer, epoch+1, margin=margin, l2=l2,
+        print_every=print_every, t0=t0)
         
         # avg_losses.append(avg_loss)
         # avg_l_ns.append(avg_l_n)
