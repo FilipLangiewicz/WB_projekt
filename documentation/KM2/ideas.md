@@ -40,3 +40,22 @@ maybe some interesting source: [False Negative Elimination](https://arxiv.org/pd
 The main goal of this method would be to train model with different objective. The objective would be to compare the model outputs from differently augumented image.
 
 [this could be a source](https://medium.com/analytics-vidhya/self-supervised-representation-learning-in-computer-vision-part-2-8254aaee937c)
+
+
+
+## Evaluation - How to evaluate the results
+
+### Simple classifier on top
+The basic idea proposed in the original article, was to train a classifier on top of the embeddings. 
+
+### Clustering 
+Alternatively we could train a clustering method (such as kmeans) and later on evaluate the performance on different embeddings.
+
+Here we could use the silhouette, calinski harabasz along with homogenity and completness score.
+
+### Visualisation
+
+As during the first project we could create a tSNE visualisation which gives an insight how the representation is organised.
+
+tSNE could be run on embeddings preprocessed by PCA
+
