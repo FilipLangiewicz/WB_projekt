@@ -20,7 +20,7 @@ from pathlib import Path
 
 
 # values to change during training
-model_name = 'TileNet_no_triplets_cos.ckpt'
+model_name = 'TileNet_no_triplets_reg.ckpt'
 img_type = "landsat" # images are in float - this parameter specifies that there is a need for normalization of floats
 tile_dir = Path('/storage/tile2vec/tiles') # directory where are the triplets stored
 bands = 13
@@ -60,9 +60,9 @@ optimizer = optim.Adam(TileNet.parameters(), lr=lr, betas=(0.5, 0.999))
 
 
 # training-level parameters 
-epochs = 5
+epochs = 200
 margin = 0.5
-l2 = 0.01
+l2 = 1
 print_every = 1000 # how often model will produce the information about the loss
 save_models = True
 
