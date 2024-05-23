@@ -19,11 +19,11 @@ sys.path.append("..")
 
 # values to change during training
 #TO CHANGE
-model_name = 'Tile2Vec_color_infrated.ckpt' #defining name of model to train
+model_name = 'Tile2Vec_moisture.ckpt' #defining name of model to train
 img_type = "landsat" # images are in float - this parameter specifies that there is a need for normalization of floats
 #TO CHANGE
-tile_dir = '/storage/tile2vec/limited_bands/color_infrated' # directory where are the triplets stored
-bands = 3
+tile_dir = '/storage/tile2vec/limited_bands/moisture' # directory where are the triplets stored
+bands = 2
 augment = True
 batch_size = 50
 shuffle = True

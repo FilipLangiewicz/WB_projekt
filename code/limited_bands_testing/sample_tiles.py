@@ -18,20 +18,21 @@ def load_img(img_file, val_type='uint8', bands_only=False, num_bands=4):
     if bands_only: img = img[:,:,:num_bands]
     return img
 
+# TO CHANGE
+def load_img_custom_bands(img_file, val_type='uint8', bands_only=False):
 
-def load_img_color_infrated(img_file, val_type='uint8', bands_only=False, selected_bands=[7, 3, 2]):
-    """
-    Loads an image using gdal, returns it as an array with selected bands.
+    # COLOR INFRATED
+    # selected_bands = [7, 3, 2]
     
-    Parameters:
-    img_file (str): Path to the image file.
-    val_type (str): Type of values in the image ('uint8' or 'float32').
-    bands_only (bool): Whether to return only the specified bands.
-    selected_bands (list): List of bands to select (0-indexed).
+    # AGRICULTURE
+    # selected_bands = [11, 7, 1]
     
-    Returns:
-    np.ndarray: Array of the image with the selected bands.
-    """
+    # VEGETATION INDEX
+    ## vegetation_bands = (7 - 3)/(7 + 3)
+    
+    # MOISTURE INDEX
+    ## moisture_bands = (8 - 11)/(8 + 11)
+
     obj = gdal.Open(img_file)
     if obj is None:
         raise FileNotFoundError(f"File {img_file} not found")
@@ -46,9 +47,18 @@ def load_img_color_infrated(img_file, val_type='uint8', bands_only=False, select
     img = np.moveaxis(img, 0, -1)  # Move the bands axis to the last dimension
 
     if bands_only:
-        img = img[:, :, selected_bands]
-        # PRZY WIĘKSZYCH PRZEKSZTAŁCENIACH DODATKOWA MODYFIKACJA TYPU
-        # img[:,:,3] = img[:,:,2] - img[:,:,1]
+        
+        # COLOR INFRATED/AGRICULTURE
+        # img = img[:, :, selected_bands]
+        
+        # VEGETATION INDEX
+        # img[:, :, vegetation_bands] = (img[:,:,7] - img[:,:,3]) / (img[:,:,7] + img[:,:,3])
+        # img = img[:, :, vegetation_index]
+        
+        # MOISTURE INDEX
+        img[:, :, moisture_bands] = (img[:,:,7] - img[:,:,3]) / (img[:,:,7] + img[:,:,3])
+        img = img[:, :, moisture_index]
+        
     
     return img
 
@@ -99,7 +109,7 @@ def get_triplet_tiles(tile_dir, img_dir, img_triplets, tile_size=50, neighborhoo
         if img_name[-3:] == 'npy':
             img = np.load(os.path.join(img_dir, img_name))
         else:
-            img = load_img_color_infrated(os.path.join(img_dir, img_name), val_type=val_type, 
+            img = load_img_custom_bands(os.path.join(img_dir, img_name), val_type=val_type, 
                        bands_only=bands_only)
         img_padded = np.pad(img, pad_width=[(tile_radius, tile_radius),
                                             (tile_radius, tile_radius), (0,0)],

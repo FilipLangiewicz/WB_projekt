@@ -9,7 +9,7 @@ from sample_tiles import (
     extract_tile,
     sample_distant_same,
     sample_neighbor,
-    load_img_color_infrated,
+    load_img_custom_bands,
     sample_anchor,
     sample_distant_diff,
 )
@@ -25,9 +25,9 @@ from osgeo import gdal
 # script creates the triplets to train the tile2vec model
 
 img_type = "landsat"  # images are in float - this parameter specifies that there is a need for normalization of floats
-tile_dir = Path("/storage/tile2vec/limited_bands/color_infrated")
+tile_dir = Path("/storage/tile2vec/limited_bands/moisture")
 base_eurosat_dir = Path("/storage/EuroSATallBands")
-bands = 3
+bands = 2
 num_workers = 4
 n_triplets = 50000 # number of triplets to sample
 
@@ -82,7 +82,7 @@ def get_triplet_tiles(
         if img_name[-3:] == "npy":
             img = np.load(os.path.join(img_dir, img_name))
         else:
-            img = load_img_color_infrated(
+            img = load_img_custom_bands(
                 os.path.join(img_dir, img_name),
                 val_type=val_type,
                 bands_only=bands_only,
