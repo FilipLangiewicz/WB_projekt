@@ -50,9 +50,13 @@ Model performed suprisingly well. Even though the used augumentations were not d
 
 
 
-### Divmaker
-The novel augumentation of data, aimed at its diversity has resulted in even better results compared to SimCLR. The predictive power of Random Forest trained at the embeddings of this model was the largest.
+### Viewmaker
+The novel augumentation of data, aimed at its difference from the original has resulted in even better results compared to SimCLR. The predictive power of Random Forest trained at the embeddings of this model was the largest.
 Even though with less epochs it achieved performance for RF around 92% for 512 dimensions and 96% for 512 which is similar to the SOTA viewmaker of 2021.
+
+### Divmaker
+
+Unfortunately in our setting the contrastive learning with Divmaker performed much worse. It reported similar performance to the 
 
 
 ## Summary

@@ -1,6 +1,6 @@
 {
     "exp_base": "/storage/divmaker/",
-    "exp_name": "pretrain_eurosat_simclr_divmaker_budget_0.6",
+    "exp_name": "pretrain_eurosat_simclr_divmaker_budget_0.6_512",
     "system": "PretrainDivMakerSystem",
     "cuda": true,
     "gpu_device": 0,
@@ -13,7 +13,7 @@
         "normalize_before_view": true
     },
     "model_params": {
-        "out_dim": 128,
+        "out_dim": 512,
         "resnet": true,
         "resnet_version": "resnet18",
         "resnet_small": true,
