@@ -49,6 +49,7 @@ Sadly, band based scaling method turned out not to improve the model's performan
 | Embedding model   | Random Forest | 
 |-------------------|---------------|
 | our tile2vec      | 58.88±0.73%   | 
+| custom clipping   | 51.01±0.86%  |
 | original tile2vec | 50.98±1.07%   | 
 
 ## Output visualization

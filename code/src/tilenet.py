@@ -36,11 +36,13 @@ class ResidualBlock(nn.Module):
 
 
 class TileNet(nn.Module):
-    def __init__(self, num_blocks, in_channels=4, z_dim=512):
+    def __init__(self, num_blocks, in_channels=4, z_dim=512, triplet=True, cosine=False):
         super(TileNet, self).__init__()
         self.in_channels = in_channels
         self.z_dim = z_dim
         self.in_planes = 64
+        self.triplet = triplet
+        self.cosine = cosine
 
         self.conv1 = nn.Conv2d(self.in_channels, 64, kernel_size=3, stride=1,
             padding=1, bias=False)
@@ -86,21 +88,56 @@ class TileNet(nn.Module):
         if l2 != 0:
             loss += l2 * (torch.norm(z_p) + torch.norm(z_n) + torch.norm(z_d))
         return loss, l_n, l_d, l_nd
+    
+    def double_loss(self, z_p, z_n, y = 1, margin=0.1, l2=0):
+        dist = torch.sqrt(((z_p - z_n) ** 2).sum(dim=1))
+        dist_margin = F.relu(margin - dist)
+        loss = F.relu(y * dist + (1 - y) * dist_margin)
+        l_n = torch.mean(dist)
+        l_d = torch.mean(dist_margin)
+        loss = torch.mean(loss)
+        if l2 != 0:
+            loss += l2 * (torch.norm(z_p) + torch.norm(z_n))
+        return loss, l_n, l_d
+    
+    def cosine_loss(self, z_p, z_n, y = None, margin=0.1, l2=0):
+        y = torch.ones(z_p.size(0), device=z_p.device)
+        l_n = nn.CosineEmbeddingLoss(margin=margin)(z_p, z_n, y)
+        if self.triplet:
+            l_d = nn.CosineEmbeddingLoss(margin=margin)(z_p, z_n, -y)
+            loss = F.relu(l_n + l_d)
+        else:
+            loss = l_n
+        if l2 != 0:
+            loss += l2 * (torch.norm(z_p) + torch.norm(z_n))
+            
+        if self.triplet:
+            return loss, l_n, l_d
+        return loss, l_n, torch.tensor([0]).cuda()
+        
+        
 
-    def loss(self, patch, neighbor, distant, margin=0.1, l2=0):
+    def loss(self, patch, neighbor, distant=None, margin=0.1, l2=0):
         """
         Computes loss for each batch.
         """
-        z_p, z_n, z_d = (self.encode(patch), self.encode(neighbor),
-            self.encode(distant))
-        return self.triplet_loss(z_p, z_n, z_d, margin=margin, l2=l2)
+        z_p, z_n = (self.encode(patch), self.encode(neighbor))
+        z_d = None
+        if self.triplet:
+            z_d = self.encode(distant)
+        if self.cosine:
+            return self.cosine_loss(z_p, z_n, z_d, margin=margin, l2=l2)
+        
+        if self.triplet:
+            return self.triplet_loss(z_p, z_n, z_d, margin=margin, l2=l2)
+        return self.double_loss(z_p, z_n, margin=margin, l2=l2)
 
 
-def make_tilenet(in_channels=4, z_dim=512):
+def make_tilenet(in_channels=4, z_dim=512, triplet=True, cosine=False):
     """
     Returns a TileNet for unsupervised Tile2Vec with the specified number of
-    input channels and feature dimension.
+    input channels, feature dimension, specifies also if triplets or only two images are used during training.
     """
     num_blocks = [2, 2, 2, 2, 2]
-    return TileNet(num_blocks, in_channels=in_channels, z_dim=z_dim)
+    return TileNet(num_blocks, in_channels=in_channels, z_dim=z_dim, triplet=triplet, cosine=cosine)
 

@@ -19,7 +19,7 @@ def load_img(img_file, val_type='uint8', bands_only=False, num_bands=4):
     return img
 
 
-def load_img_color_infrated(img_file, val_type='uint8', bands_only=False, selected_bands=[7, 3, 2]):
+def load_img_color_infrated(img_file, val_type='uint8', bands_only=False, selected_bands=[7, 2-3, 2]):
     """
     Loads an image using gdal, returns it as an array with selected bands.
     
@@ -47,6 +47,7 @@ def load_img_color_infrated(img_file, val_type='uint8', bands_only=False, select
 
     if bands_only:
         img = img[:, :, selected_bands]
+        img[:, :, 3] = img[:, :, 4] - img[:, :, 1]  # NIR - Red
     
     return img
 
